@@ -11,6 +11,7 @@
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
 </head>
 
@@ -46,19 +47,117 @@
             <button class="btn btn-primary">Clique aqui para selecionar as imagens
 				<input type="file" multiple="multiple" name="imgs" id="imgs"/>
 			</button>
-
-
+            <br/>
+            <br/>
+            <button class="btn btn-secondary" onClick="converterImagens()">Converter</button>
+            <div id="res"></div>
 
         </div>
     </div>
+
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
 
     <!-- Conversor de PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
 
     <script src="js/scripts.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script>
+        var fileArray;
+
+        function processImageToPDF(file, fileArray) {
+            if (typeof file == "object") {
+
+
+                var FR = new FileReader();
+                FR.addEventListener("load", function(e) {
+                    var img = new Image();
+                    img.onload = function() {
+                        var imgWidth = img.width;
+                        var imgHeight = img.height;
+                        var orientationPage = (imgWidth > imgHeight) ? "l" : "p";
+                        var doc = new jsPDF(orientationPage, 'px', [imgWidth, imgHeight]);
+                        let width = doc.internal.pageSize.getWidth()
+                        let height = doc.internal.pageSize.getHeight()
+                        doc.addImage(
+                            e.target.result,
+                            'JPEG',
+                            0,
+                            0,
+                            width,
+                            height,
+                        )
+
+
+                        //doc.addImage(e.target.result, 'JPEG', 0, 0, width, height);
+                        doc.save("ImagemPDF.pdf", {
+                            returnPromise: true
+                        }).then(function() {
+                            console.log("sucessinho manos");
+                            try {
+                                indexLoop = indexLoop + 1;
+                                processImageToPDF(fileArray.item(indexLoop), fileArray);
+                            } catch (e) {
+                                alert("Todos os arquivos foram processados com sucesso!");
+                                console.log("Erro ao processar: ", e)
+                            }
+
+                        });
+
+
+                    };
+                    img.src = e.target.result;
+
+
+
+                });
+                FR.readAsDataURL(file);
+
+            }
+        }
+
+        function converterImagens() {
+            FileDetails();
+
+        }
+
+        function pixelsToMM(value) {
+            return value * 0.2645833333;
+        }
+        var indexLoop;
+
+        function FileDetails() {
+
+            var fi = document.getElementById('imgs');
+
+            if (fi.files.length > 0) {
+
+                document.getElementById('res').innerHTML =
+                    'Total de Arquivos: <strong>' + fi.files.length + '</strong></br >';
+
+                for (var i = 0; i <= fi.files.length - 1; i++) {
+                    var fname = fi.files.item(i).name;
+                    var fsize = fi.files.item(i).size;
+
+                    document.getElementById('res').innerHTML =
+                        document.getElementById('res').innerHTML + '<br /> ' +
+                        fname + ' (<strong>' + fsize + '</strong> bytes)';
+                }
+                indexLoop = 0;
+                processImageToPDF(fi.files.item(0), fi.files);
+
+            } else {
+                alert('Please select a file.')
+            }
+        }
+    </script>
+
 </body>
 
 </html>

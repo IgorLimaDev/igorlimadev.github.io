@@ -11,6 +11,8 @@
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
 </head>
 
 <body>
@@ -40,11 +42,23 @@
     </nav>
     <!-- Page content-->
     <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2>Conversor de Imagem para PDF em massa</h2>
+                <p>Converta diversas imagens para PDF separadamente de uma vez só utilizando esta ferramenta.</p>
+                <p></p>
+            </div>
+        </div>
+
         <div class="text-center mt-5">
             <br/>
-            <button class="btn btn-primary">Clique aqui para selecionar as imagens
-				<input type="file" multiple="multiple" name="imgs" id="imgs"/>
-			</button>
+            <label for="imgs">
+                <input style="display:none;" type="file" multiple="multiple" name="imgs" id="imgs"/>
+                <button class="btn btn-primary">
+                    <i class="fas fa-folder-open"></i> Clique aqui para selecionar as imagens
+                </button>
+            </label>
+
             <br/>
             <br/>
             <button class="btn btn-secondary" onClick="converterImagens()">Converter</button>

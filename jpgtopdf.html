@@ -51,15 +51,21 @@
                             <h2>Conversor de Imagem para PDF em massa</h2>
                             <p>Converta diversas imagens para PDF separadamente de uma vez só utilizando esta ferramenta.</p>
                             <p>Basta clicar no botão para selecionar quantas imagens necessitar, e depois clicar em "Converter". Se o navegador pedir permissão para "Fazer o download de vários arquivos", conceda a permissão, para que todos os arquivos PDF sejam baixados corretamente.</p>
-                
+
                 </div>
                         </div>
         </div>
         <div class="text-center">
-            
+            <p><strong>Progresso:</strong>
+				<br/>
+			<progress id="progresso" value="0" max="0"></progress>
+			</p>
+			
+
+			
             <label class="btn btn-primary" for="imgs">
-                    <i class="fas fa-folder-open"></i> Clique aqui para selecionar as imagens
-                    <input type="file" multiple="multiple" name="imgs" id="imgs">
+                <i class="fas fa-folder-open"></i> Clique aqui para selecionar as imagens
+                <input type="file" multiple="multiple" name="imgs" id="imgs">
             </label>
 
             <br>
@@ -115,6 +121,7 @@
                             returnPromise: true
                         }).then(function() {
                             console.log("sucessinho manos");
+							manageProgress();
                             try {
                                 indexLoop = indexLoop + 1;
                                 processImageToPDF(fileArray.item(indexLoop), fileArray);
@@ -150,7 +157,7 @@
         function FileDetails() {
 
             var fi = document.getElementById('imgs');
-
+			jQuery("#progresso").attr("value", 0);
             if (fi.files.length > 0) {
 
                 document.getElementById('res').innerHTML =
@@ -171,6 +178,12 @@
                 alert('Please select a file.')
             }
         }
+
+		function manageProgress() {
+	var progressbar = jQuery("#progresso");
+	progressbar.attr("max", jQuery("#imgs")[0].files.length);
+	progressbar.attr("value", parseInt(progressbar.attr("value") + 1));
+}
     </script>
 
 </body>

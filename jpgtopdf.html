@@ -24,6 +24,8 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link active" aria-current="page" href="/#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="https://github.com/IgorLimaDev" target="_blank">GitHub</a></li>
+
                     <!--
                         <li class="nav-item"><a class="nav-link" href="#">Link</a></li>
                         <li class="nav-item dropdown">
@@ -44,24 +46,25 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <h2>Conversor de Imagem para PDF em massa</h2>
-                <p>Converta diversas imagens para PDF separadamente de uma vez só utilizando esta ferramenta.</p>
-                <p>Basta clicar no botão para selecionar quantas imagens necessitar, e depois clicar em "Converter". Se o navegador pedir permissão para "Fazer o download de vários arquivos", conceda a permissão, para que todos os arquivos PDF sejam baixados corretamente.</p>
-            </div>
+                <br><br>
+            <div class="alert alert-secondary">
+                            <h2>Conversor de Imagem para PDF em massa</h2>
+                            <p>Converta diversas imagens para PDF separadamente de uma vez só utilizando esta ferramenta.</p>
+                            <p>Basta clicar no botão para selecionar quantas imagens necessitar, e depois clicar em "Converter". Se o navegador pedir permissão para "Fazer o download de vários arquivos", conceda a permissão, para que todos os arquivos PDF sejam baixados corretamente.</p>
+                
+                </div>
+                        </div>
         </div>
-
-        <div class="text-center mt-5">
-            <br/>
-            <label for="imgs">
-                <input style="display:none;" type="file" multiple="multiple" name="imgs" id="imgs"/>
-                <button class="btn btn-primary">
+        <div class="text-center">
+            
+            <label class="btn btn-primary" for="imgs">
+                <input type="file" multiple="multiple" name="imgs" id="imgs">
                     <i class="fas fa-folder-open"></i> Clique aqui para selecionar as imagens
-                </button>
             </label>
 
-            <br/>
-            <br/>
-            <button class="btn btn-secondary" onClick="converterImagens()">Converter</button>
+            <br>
+            <br>
+            <button class="btn btn-secondary" onclick="converterImagens()">Converter</button>
             <div id="res"></div>
 
         </div>

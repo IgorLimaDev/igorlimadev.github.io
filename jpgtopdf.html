@@ -116,8 +116,9 @@
                         )
 
                         console.log(file);
+                        var f = file.name.substr(0, file.name.lastIndexOf('.'));
                         //doc.addImage(e.target.result, 'JPEG', 0, 0, width, height);
-                        doc.save("ImagemPDF.pdf", {
+                        doc.save(f  + ".pdf", {
                             returnPromise: true
                         }).then(function() {
                             console.log("sucessinho manos");

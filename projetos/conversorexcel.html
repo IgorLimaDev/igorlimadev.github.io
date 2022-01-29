@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Converter Excel em Texto Formatado</title>
+  </head>
+  <body>
+    
+	<div class="container">
+	<br/>
+		<h1 class="text-center"> Converter Excel em Texto Formatado </h1>
+		<br/>
+	<button onClick="trazerExcelFile()" class="btn btn-primary btn-block">Trazer</button>
+	<div class="loader-precos" style="padding:10px;border:1px solid red;"></div>
+	<div class="loader-estoque" style="padding:10px;border:1px solid blue;"></div>
+	<input type="file" class="excel"/>
+	
+	<br/>
+	<br/>
+	<textarea class="produtos-csv form-control" placeholder="Código CSV" style="height:500px;"></textarea>
+	
+
+	
+	</div>
+
+	<sc
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
+	<script>
+const options = {
+  method: 'GET',
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    'X-VTEX-API-AppKey': 'vtexappkey-hyperapharma-HHFNOA',
+    'X-VTEX-API-AppToken': 'FRQAVWKWNPLKXPWAMRXLBKUFSIYCKILQUFOOYKEYHONNVRYOCWNRXBJVXKINXHLEDUPSAICBNZDNWGJAJJAOVUTSVSQNCRAACJKABGOUTMEYYWZRAHDOHWJIBXWHRPYV'
+  }
+};		var excelGlobal;
+		
+		var urlPreco = "https://api.vtex.com/hyperapharma/pricing/prices/";
+		var urlEstoque = "https://hyperapharma.vtexcommercestable.com.br/api/logistics/pvt/inventory/skus/";
+		var urlCurlVtex = "/ihypera/csv/curl_vtex.php";
+				var contatorPreco = 0;
+				var loaderPrecos = jQuery(".loader-precos");
+				var loaderEstoque = jQuery(".loader-estoque");
+
+		function trazerExcelFile() {
+			var file = document.querySelector(".excel").files[0];
+			parseExcel(file, function(excel) {
+				excelGlobal = excel;
+				contatorPreco = 0;
+				ajaxRecursivoPrecos(urlPreco, 0);
+			});
+		}
+		
+		function ajaxRecursivoPrecos(urlApi ,contador) {
+			try {
+				ajax(contador, urlApi, urlCurlVtex, {url: urlApi + excelGlobal[contador]["_SkuId (Não alterável)"]}, function(data) {
+					console.log("objeto excel global:", excelGlobal[contador])
+					//debugger;
+					var foundTradePolicy = false;
+					for(j = 0; j < data.fixedPrices.length; j++) {
+						if(data.fixedPrices[j].tradePolicyId == "1") {
+							foundTradePolicy = true;
+							excelGlobal[contador]["attribute:price"] = data.fixedPrices[j].value;
+							excelGlobal[contador]["attribute:precoPor"] = data.fixedPrices[j].listPrice;
+						} 
+					}
+					if(!foundTradePolicy) {
+						excelGlobal[contador] = null;
+					}
+					var cnt = contador + 1;
+					if(cnt <= excelGlobal.length) {
+						ajaxRecursivoPrecos(urlApi, contador + 1, function(a) {});
+						jQuery(loaderPrecos).html("Preço aplicado em " + cnt + " de " + excelGlobal.length);
+					} else {
+					}
+					
+					
+				});
+			} catch(e) {
+				console.log(e);
+				ajaxRecursivoEstoque(urlEstoque, 0);
+			}
+		}
+		
+		function ajaxRecursivoEstoque(urlApi ,contador) {
+			try {
+				ajax(contador, urlApi, urlCurlVtex, {url: urlApi + excelGlobal[contador]["_SkuId (Não alterável)"]}, function(data) {
+					console.log("objeto estoque excel global:", excelGlobal[contador])
+					//debugger;
+					foundTradePolicy = true;
+					if(data.balance[0].totalQuantity == 0) {
+						excelGlobal[contador]["attribute:promotable"] = false;
+					} else {
+						excelGlobal[contador]["attribute:promotable"] = true;
+					}
+					excelGlobal[contador]["attribute:inventoryCount"] = data.balance[0].totalQuantity;
+					
+					var cnt = contador + 1;
+					if(cnt <= excelGlobal.length) {
+						ajaxRecursivoEstoque(urlApi, contador + 1, function(a) {});
+						jQuery(loaderEstoque).html("Estoque aplicado em " + cnt + " de " + excelGlobal.length);
+					} else {
+					}
+					
+					
+				});
+			} catch(e) {
+				console.log(e);
+				console.log("Fim total")
+
+				for(ttl = 0; ttl < excelGlobal.length; ttl++) {
+					excelGlobal[ttl]["attribute:loja"] = "9";
+					delete excelGlobal[ttl]["_CodigosLojas"];
+					
+					excelGlobal[ttl]["skus"] = excelGlobal[ttl]["_SkuId (Não alterável)"];
+					delete excelGlobal[ttl]["_SkuId (Não alterável)"];
+					
+					excelGlobal[ttl]["id"] = excelGlobal[ttl]["_IdProduto (Não alterável)"];
+					delete excelGlobal[ttl]["_IdProduto (Não alterável)"];
+					
+					excelGlobal[ttl]["categories"] = excelGlobal[ttl]["_NomeCategoria"];
+					delete excelGlobal[ttl]["_NomeCategoria"];
+					
+					excelGlobal[ttl]["attribute:brand"] = excelGlobal[ttl]["_Marca"];
+					delete excelGlobal[ttl]["_Marca"];
+					
+				}
+				var csvResultado = convertToCSV(excelGlobal);
+				jQuery(".produtos-csv").val(csvResultado);
+			}
+		}
+		
+		function ajax(contador, urlApi, url, dados, cb) {
+			
+			jQuery.ajax({
+				type: "POST",
+				url: url,
+				data: dados,
+				success: function(res) {
+					console.log("Resultado API: ", res);
+					var jsonres;
+					try {
+						jsonres = JSON.parse(res);
+						cb(jsonres);
+					} catch(e) {
+						ajaxRecursivoPrecos(urlApi, contador + 1);
+					}
+					
+				}
+			});
+		
+		}
+	
+function convertToCSV(arr) {
+  const array = [Object.keys(arr[0])].concat(arr)
+
+  return array.map(it => {
+    return Object.values(it).toString()
+  }).join('\n')
+}
+
+
+  function parseExcel(file, callBackProcess) {
+    var reader = new FileReader();
+
+    reader.onload = function(e) {
+      var data = e.target.result;
+      var workbook = XLSX.read(data, {
+        type: 'binary'
+      });
+
+      workbook.SheetNames.forEach(function(sheetName) {
+        // Here is your object
+        var excelJson = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+        var jsonString = JSON.stringify(excelJson);
+		callBackProcess(excelJson);
+      })
+
+    };
+
+    reader.onerror = function(ex) {
+      console.log(ex);
+    };
+
+    reader.readAsBinaryString(file);
+  }
+
+	
+	</script>
+	
+	
+  </body>
+</html>

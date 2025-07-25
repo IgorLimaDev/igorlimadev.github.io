@@ -67,6 +67,11 @@ h4 {
     backdrop-filter: blur(3px);
 }
 
+a {
+    color: #fff;
+    font-size: 1.9em;
+}
+
 @media only screen and (max-width:768px) { 
 	h1 {
 		font-size:54px;

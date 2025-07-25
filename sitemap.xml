@@ -10,7 +10,7 @@
     
     <!-- Diretório de posts -->
     <url>
-        <loc>https://igorlimadev.github.io/posts/</loc>
+        <loc>https://igorlimadev.github.io/blog/</loc>
         <lastmod>2025-07-26</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
@@ -18,7 +18,7 @@
     
     <!-- Post específico -->
     <url>
-        <loc>https://igorlimadev.github.io/posts/google-trends-api-o-que-mudou-com-o-lancamento-oficial.html</loc>
+        <loc>https://igorlimadev.github.io/blog/posts/google-trends-api-o-que-mudou-com-o-lancamento-oficial.html</loc>
         <lastmod>2025-07-26</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>

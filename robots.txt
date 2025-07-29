@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://igorlimadev.github.io/sitemap.xml
